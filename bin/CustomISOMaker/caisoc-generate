@@ -1,0 +1,61 @@
+#!/bin/bash
+
+#Custom Arch ISO Creator (caISOc)
+#Script Written by LBlaze
+#V1.1
+
+## Handle Deps ##
+echo "Installing Missing Deps..."
+sudo pacman -S squashfs-tools archiso --needed
+echo
+
+
+## Variables ##
+configLoc="$HOME/.config/caisoc"
+config="$configLoc/config"
+
+
+## Handle Config File ##
+if [ -f "$config" ]; then
+    source "$config"
+else
+    echo "Warning: Reading Config Failed, Generating Defaults"
+    mkdir -p "$configLoc"
+    touch "$config"
+    echo "projectLocation=$HOME/caisoc_Projects" > "$config"
+    source "$config"
+fi
+
+
+## Handle Missing Files ##
+mkdir -p "$projectLocation/GeneratedISOs"
+
+
+## Generate Project##
+echo
+echo "What Project would you like to generate?"
+read -r projectName
+echo
+
+if [ ! -d "$projectLocation/$projectName" ]; then
+    echo "ERROR: This project does not exist"
+    exit 1
+fi
+mkdir "$projectLocation/tmp"
+cp -r "$projectLocation/$projectName"/* "$projectLocation/tmp/"
+pushd "$projectLocation/tmp/mnt/arch/x86_64" || exit 1
+rm airootfs.sfs
+mksquashfs squashfs-root airootfs.sfs
+md5sum airootfs.sfs > airootfs.md5
+sudo rm -rf squashfs-root
+
+echo
+echo "Please enter the lable for the ISO, as it was originally (If not done correct, ISO wont boot)"
+echo "If you do not know, use ARCH_YYYYMM"
+echo "For example, the January iso for 2016 is ARCH_201601"
+read -r iso_label
+
+pushd "$projectLocation/tmp/mnt" || exit 1
+xorriso -as mkisofs -iso-level 3 -full-iso9660-filenames -volid "${iso_label}" -eltorito-boot isolinux/isolinux.bin -eltorito-catalog isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -isohybrid-mbr isolinux/isohdpfx.bin -eltorito-alt-boot -e EFI/archiso/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -output "$projectLocation/GeneratedISOs/$projectName.iso" "$projectLocation/tmp/mnt"
+popd
+popd

@@ -1,0 +1,74 @@
+#!/bin/bash
+
+#Custom Arch ISO Creator (caISOc)
+#Script Written by LBlaze
+#V1.0
+
+## Handle Deps ##
+echo "Installing Missing Deps..."
+sudo pacman -S squashfs-tools archiso --needed
+echo
+
+
+## Variables ##
+configLoc="$HOME/.config/caisoc"
+config="$configLoc/config"
+
+
+## Handle Config File ##
+if [ -f "$config" ]; then
+    source "$config"
+else
+    echo "Warning: Reading Config Failed, Generating Defaults"
+    mkdir -p "$configLoc"
+    touch "$config"
+    echo "projectLocation=$HOME/caisoc_Projects" > "$config"
+    source "$config"
+fi
+
+
+## Handle Missing Files ##
+mkdir -p "$projectLocation"/{OriginalISO,mnt}
+
+if ls "$projectLocation"/OriginalISO/*.iso &> /dev/null; then
+    echo "Found An ISO"
+    echo "If there is more then one ISO this process might not work correctly"
+    echo "If that is the case, please exit this script with Ctrl+C immediatly"
+else
+    echo "No ISO Found, please put a single arch install iso in this directory:"
+    echo "$projectLocation/OriginalISO/"
+    echo "This script will now exit..."
+    exit 1
+fi
+
+
+## Generate Project Folder ##
+echo
+echo "What do you wish to call this project? Please do not use spaces"
+read -r projectName
+echo
+
+if [ -d "$projectLocation/$projectName" ]; then
+    echo "This project already exists, please delete the original project to generate a new one"
+    exit 1
+fi
+
+echo "Generating Project Files..."
+
+pushd "$projectLocation"  || exit 1
+
+mkdir -p "$projectLocation/$projectName"
+sudo mount -t iso9660 -o loop "$projectLocation"/OriginalISO/*.iso "$projectLocation/mnt"
+cp -a "$projectLocation/mnt" "$projectLocation/$projectName"
+sudo umount "$projectLocation/mnt"
+pushd "$projectName/mnt/arch/x86_64" || exit 1
+unsquashfs airootfs.sfs
+
+popd || exit 1
+popd || exit 1
+
+echo
+echo
+echo "Script Complete, you may find your project in this directory:"
+echo "$projectLocation/$projectName/mnt/arch/x86_64/squashfs-root"
+exit 0

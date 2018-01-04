@@ -1,0 +1,10 @@
+#!/bin/bash
+if [[ -f "$1" ]]; then
+    gpg -c "$1"
+    rm "$1"
+elif [[ -d "$1" ]]; then
+    tar -cf "$1".tar "$1"
+    gpg -c "$1".tar
+    rm "$1".tar
+    rm -R "$1"
+fi

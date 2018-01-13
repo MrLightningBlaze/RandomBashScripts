@@ -1,10 +1,10 @@
 #!/bin/bash
-if [[ -f "$1" ]]; then
-    gpg -c "$1"
-    rm "$1"
-elif [[ -d "$1" ]]; then
-    tar -cf "$1".tar "$1"
-    gpg -c "$1".tar
-    rm "$1".tar
-    rm -R "$1"
+if [[ -f "$1" ]]; then #If the sent file in Arg1 is a single file
+    gpg -c "$1" #Encrypt it
+    rm "$1" #And remove the original
+elif [[ -d "$1" ]]; then #But if it is a folder
+    tar -cf "$1".tar "$1" #Compress it
+    gpg -c "$1".tar #Encrypt the compressed file
+    rm "$1".tar #Remove unencrypted compressed file
+    rm -R "$1" #Remove Original Folder
 fi

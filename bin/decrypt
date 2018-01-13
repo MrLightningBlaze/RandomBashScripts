@@ -1,7 +1,7 @@
 #!/bin/bash
-gpg "$1"
-rm "$1"
-if [[ -f "${1::-4}" ]]; then
-    tar -xf "${1::-4}"
-    rm "${1::-4}"
+gpg "$1" #Decrypt File in Arg1
+rm "$1" #Remove Encrypted File
+if [[ -f "${1::-4}" ]]; then #If file is an archive
+    tar -xf "${1::-4}" #Then Unarchive it
+    rm "${1::-4}" #Remove old archive after its unarchived
 fi

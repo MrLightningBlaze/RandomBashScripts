@@ -2,31 +2,30 @@
 
 ##PreSetup
 
-mkdir $HOME/PacaurSetup
-chmod -R 777 $HOME/PacaurSetup
-cd $HOME/PacaurSetup
-pacman -S expac yajl git base-devel --needed --noconfirm
+mkdir $HOME/PacaurSetup #Make Setup Dir
+chmod -R 777 $HOME/PacaurSetup #Make It accessable by anyone
+cd $HOME/PacaurSetup #Go Into Setup Dir
+pacman -S expac yajl git base-devel --needed --noconfirm #Install Needed Packages
 
-gpg --recv-keys --keyserver hkp://pgp.mit.edu 1EB2638FF56C0C53
-gpg --recv-keys --keyserver hkp://pgp.mit.edu 1EB2638FF56C0C53
+gpg --recv-keys --keyserver hkp://pgp.mit.edu 1EB2638FF56C0C53 ##Import Needed keys
 
 ##Download And Ready Files
-curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/cower.tar.gz
-curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/pacaur.tar.gz
-tar -xvf cower.tar.gz
-tar -xvf pacaur.tar.gz
+curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/cower.tar.gz #Download the needed files for cower
+curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/pacaur.tar.gz #Download the needed files for pacaur
+tar -xvf cower.tar.gz #Decompress the needed files for cower
+tar -xvf pacaur.tar.gz #Decompress the needed files for pacaur
 
 
 ##Install Cower
-cd cower
-makepkg
-sudo pacman -U *.pkg.tar.xz --noconfirm
+cd cower #Go to Cower Dir
+makepkg #Make Cower
+sudo pacman -U *.pkg.tar.xz --noconfirm #Install Cower
 
 ##Install Pacaur
-cd ../pacaur
-makepkg
-sudo pacman -U *.pkg.tar.xz --noconfirm
+cd ../pacaur #Go to Pacaur Dir
+makepkg #Make Pacaur
+sudo pacman -U *.pkg.tar.xz --noconfirm #Install Pacaur
 
 ##Cleanup
-cd ../..
-rm -Rf $HOME/PacaurSetup
+cd ../.. #Go out of setup dir
+rm -Rf $HOME/PacaurSetup #Remove Setup Dir

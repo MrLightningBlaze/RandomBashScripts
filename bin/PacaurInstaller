@@ -5,7 +5,7 @@
 mkdir $HOME/PacaurSetup #Make Setup Dir
 chmod -R 777 $HOME/PacaurSetup #Make It accessable by anyone
 cd $HOME/PacaurSetup #Go Into Setup Dir
-pacman -S expac yajl git base-devel --needed --noconfirm #Install Needed Packages
+sudo pacman -S expac yajl git base-devel --needed --noconfirm #Install Needed Packages
 
 gpg --recv-keys --keyserver hkp://pgp.mit.edu 1EB2638FF56C0C53 ##Import Needed keys
 
